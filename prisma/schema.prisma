@@ -1,0 +1,31 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  lastName String
+  password String
+  todos    Todos[]
+  email    String  @unique
+}
+
+model Todos {
+  id      Int       @id @default(autoincrement())
+  ownerId Int
+  task    String
+  dueDate DateTime?
+  status  Int       @default(1)
+  owner   User      @relation(fields: [ownerId], references: [id])
+}
+
+// * STATUS: { 1: "Completed", 2: "Uncompleted" } *
