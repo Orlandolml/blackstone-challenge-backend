@@ -7,6 +7,6 @@ export declare class UserController {
     private jwtService;
     constructor(userService: UserService, jwtService: JwtService);
     getUser(res: Response): Promise<void>;
-    create(userData: User, res: Response): Promise<Response<any, Record<string, any>>>;
-    login(reqBody: User, res: Response): Promise<Response<any, Record<string, any>>>;
+    create(userData: User, res: Response): Promise<void>;
+    login(reqBody: User, res: Response): Promise<void>;
 }

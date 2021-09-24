@@ -51,21 +51,21 @@ export class UserController {
         userData.password = await bcrypt.hash(password, 10);
         let data = await this.userService.createUser(userData);
 
-        return res.json({
+        res.json({
           success: true,
           token: this.jwtService.sign({ userId: data.id }),
         });
       }
     } catch (error) {
       if (error.code === 'P2002') {
-        return res.status(HttpStatus.CONFLICT).json({
+        res.status(HttpStatus.CONFLICT).json({
           success: false,
           error: {
             message: 'This user already exists',
           },
         });
       }
-      return res.status(HttpStatus.NOT_FOUND).json({
+      res.status(HttpStatus.NOT_FOUND).json({
         success: false,
         error,
       });
@@ -80,13 +80,20 @@ export class UserController {
       const user = await this.userService.findOne(undefined, email);
 
       if (user && (await bcrypt.compare(password, user.password))) {
-        return res.json({
+        res.json({
           success: true,
           token: this.jwtService.sign({ userId: user.id }),
         });
+      } else {
+        res.json({
+          success: false,
+          error: {
+            message: 'Invalid user credentials',
+          },
+        });
       }
     } catch (error) {
-      return res.status(HttpStatus.NOT_FOUND).json({
+      res.status(HttpStatus.NOT_FOUND).json({
         success: false,
         error,
       });
