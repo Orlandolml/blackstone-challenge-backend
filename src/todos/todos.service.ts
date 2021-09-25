@@ -7,13 +7,11 @@ import { PrismaService } from '../prisma/prisma.service';
 export class TodosService {
   constructor(private prismaService: PrismaService) {}
 
-  async get(ownerId: number, params: any): Promise<Todos[]> {
+  async get(ownerId: number): Promise<Todos[]> {
     return this.prismaService.todos.findMany({
       where: {
         ownerId,
       },
-      skip: 10 * params.page - 10,
-      take: 10,
     });
   }
 
@@ -34,12 +32,20 @@ export class TodosService {
     ownerId: number,
     todoData: Prisma.TodosUpdateInput,
   ): Promise<Todos | any> {
+    let data = {
+      ...todoData,
+    };
+
+    if (todoData.dueDate) {
+      data.dueDate = new Date(todoData.dueDate.toString());
+    }
+
     return this.prismaService.todos.updateMany({
       where: {
         ownerId,
         id: todoId,
       },
-      data: todoData,
+      data: data,
     });
   }
 

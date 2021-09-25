@@ -1,17 +1,16 @@
 import {
   Get,
   Res,
+  Put,
   Post,
   Body,
-  Query,
-  HttpCode,
-  Controller,
-  HttpStatus,
-  Put,
   Param,
   Delete,
+  HttpCode,
+  HttpStatus,
+  Controller,
 } from '@nestjs/common';
-import { response, Response } from 'express';
+import { Response } from 'express';
 import { Todo } from 'src/models/todo';
 import { UserService } from 'src/user/user.service';
 import { TodosService } from '../todos/todos.service';
@@ -25,18 +24,17 @@ export class TodosController {
 
   @Get()
   @HttpCode(200)
-  async getTodos(@Query() query, @Res() res: Response) {
+  async getTodos(@Res() res: Response) {
     try {
-      let page = query.page;
       let userId = res.locals.userId;
-      let todos = await this.todosService.get(userId, { page });
+      let todos = await this.todosService.get(userId);
 
       res.json({
         success: true,
         data: todos,
       });
     } catch (error) {
-      res.status(HttpStatus.NOT_FOUND).json({
+      res.json({
         success: false,
         error: {
           ...error,
@@ -94,12 +92,13 @@ export class TodosController {
             message: 'No todo with that id was found',
           },
         });
-        res.status(HttpStatus.NO_CONTENT);
       }
     } catch (error) {
       res.json({
         success: false,
-        error,
+        error: {
+          message: error.message,
+        },
       });
     }
   }
@@ -126,7 +125,6 @@ export class TodosController {
             message: 'No todo with that id was found',
           },
         });
-        res.status(HttpStatus.NO_CONTENT);
       }
     } catch (error) {
       res.json({

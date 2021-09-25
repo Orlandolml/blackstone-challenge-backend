@@ -21,17 +21,16 @@ export class AuthMiddleware implements NestMiddleware {
             message: 'Please sign in your account',
           },
         });
-        res.status(511);
       }
     } catch (error) {
       if (error.message && error.message === 'jwt expired') {
         res.json({
           success: false,
           error: {
+            code: 'TOKEN_EXPIRED',
             message: 'Session has expired, please sign in again.',
           },
         });
-        res.status(511);
       }
     }
   }

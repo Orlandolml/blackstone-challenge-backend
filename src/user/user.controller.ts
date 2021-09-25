@@ -1,16 +1,7 @@
 import * as bcrypt from 'bcrypt';
-import {
-  Get,
-  Req,
-  Res,
-  Body,
-  Post,
-  HttpCode,
-  Controller,
-  HttpStatus,
-} from '@nestjs/common';
+import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { Request, Response } from 'express';
+import { Get, Res, Body, Post, HttpCode, Controller } from '@nestjs/common';
 import { User } from '../models/user';
 import { UserService } from './user.service';
 
@@ -58,17 +49,18 @@ export class UserController {
       }
     } catch (error) {
       if (error.code === 'P2002') {
-        res.status(HttpStatus.CONFLICT).json({
+        res.json({
           success: false,
           error: {
             message: 'This user already exists',
           },
         });
+      } else {
+        res.json({
+          success: false,
+          error,
+        });
       }
-      res.status(HttpStatus.NOT_FOUND).json({
-        success: false,
-        error,
-      });
     }
   }
 
@@ -93,7 +85,7 @@ export class UserController {
         });
       }
     } catch (error) {
-      res.status(HttpStatus.NOT_FOUND).json({
+      res.json({
         success: false,
         error,
       });
